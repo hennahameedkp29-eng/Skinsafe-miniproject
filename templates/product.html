@@ -1,0 +1,255 @@
+<!-- ============================================ -->
+<!-- 3. product.html - FIXED (product_id → index) -->
+<!-- ============================================ -->
+{% extends "base.html" %}
+
+{% block title %}{{ product.title|default('Product') }} - Skincare Recommender{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="product-detail">
+        <div class="row g-4">
+            <!-- Product Image -->
+            <div class="col-md-5">
+                <div class="product-image">
+                    {% if product.image_url and product.image_url != '' %}
+                        <img src="{{ product.image_url }}" 
+                             alt="{{ product.title|default('Product') }}"
+                             onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/placeholder.png') }}" 
+                             alt="{{ product.title|default('Product') }}">
+                    {% endif %}
+                </div>
+                
+                {% if current_user.is_authenticated %}
+                <button class="btn btn-outline-primary w-100 mt-3" onclick="window.location.href='{{ url_for('save_product', idx=product.index) }}'">
+                    <i class="fas fa-heart {% if saved %}fas{% else %}far{% endif %}"></i>
+                    {% if saved %}Saved{% else %}Save Product{% endif %}
+                </button>
+                {% endif %}
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-md-7">
+                <div class="product-brand text-primary">{{ product.brand|default('Unknown Brand') }}</div>
+                <h1>{{ product.title|default(product.product_name|default('Product')) }}</h1>
+                
+                {% if score %}
+                <div class="mb-4">
+                    <div class="match-score {% if score.overall >= 70 %}high{% elif score.overall >= 40 %}medium{% else %}low{% endif %}">
+                        <i class="fas fa-star"></i>
+                        {{ score.overall }}% Match
+                    </div>
+                    <small class="text-muted d-block mt-2">
+                        Skin: {{ score.skin }}% | Preferences: {{ score.prefs }}% | Targets: {{ score.targets }}%
+                    </small>
+                </div>
+                {% elif current_user.is_authenticated %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Complete your <a href="{{ url_for('profile') }}">profile</a> to see your match score!
+                </div>
+                {% endif %}
+
+                <!-- Suited Skin Types -->
+                {% if product.suited_skin_types and product.suited_skin_types != '' %}
+                <div class="info-section">
+                    <h4><i class="fas fa-droplet"></i> Suited Skin Types</h4>
+                    <div class="tags-container">
+                        {% if ',' in product.suited_skin_types %}
+                            {% for skin in product.suited_skin_types.split(',') %}
+                            <span class="tag">
+                                <i class="fas fa-check"></i>
+                                {{ skin.strip() }}
+                            </span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="tag">
+                                <i class="fas fa-check"></i>
+                                {{ product.suited_skin_types }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Concerns/Features -->
+                {% if product.concerns and product.concerns != '' %}
+                <div class="info-section">
+                    <h4><i class="fas fa-shield-alt"></i> Product Features</h4>
+                    <div class="tags-container">
+                        {% if ',' in product.concerns %}
+                            {% for concern in product.concerns.split(',') %}
+                            <span class="tag">
+                                <i class="fas fa-check-circle"></i>
+                                {{ concern.strip() }}
+                            </span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="tag">
+                                <i class="fas fa-check-circle"></i>
+                                {{ product.concerns }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Benefits -->
+                {% if product.benefits_clean and product.benefits_clean != '' %}
+                <div class="info-section">
+                    <h4><i class="fas fa-magic"></i> Benefits</h4>
+                    <div class="tags-container">
+                        {% if ',' in product.benefits_clean %}
+                            {% for benefit in product.benefits_clean.split(',') %}
+                            <span class="tag">
+                                <i class="fas fa-star"></i>
+                                {{ benefit.strip() }}
+                            </span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="tag">
+                                <i class="fas fa-star"></i>
+                                {{ product.benefits_clean }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Category -->
+                {% if product.category and product.category != 'Unknown' %}
+                <div class="info-section">
+                    <h4><i class="fas fa-tag"></i> Category</h4>
+                    <a href="{{ url_for('category_page', name=product.category) }}" class="btn btn-outline-primary btn-sm">
+                        {{ product.category }}
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 mt-4 flex-wrap">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('product_alternatives', idx=product.index) }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-exchange-alt"></i> Find Alternatives
+                    </a>
+                    {% else %}
+                    <button class="btn btn-primary btn-lg" onclick="alert('Please create an account for personalized recommendations'); window.location.href='{{ url_for('signup') }}'">
+                        <i class="fas fa-exchange-alt"></i> Find Alternatives
+                    </button>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('search') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-search"></i> Search More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- More in Category -->
+    {% if product.category and product.category != 'Unknown' %}
+    <div class="mt-5">
+        <h3 class="mb-4">More in {{ product.category }}</h3>
+        <a href="{{ url_for('category_page', name=product.category) }}" class="btn btn-outline-primary">
+            View All {{ product.category }} Products <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.product-detail {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-md);
+    margin-top: 2rem;
+}
+
+.product-image {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background: white;
+}
+
+.product-image img {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+    padding: 1rem;
+}
+
+.product-brand {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.product-info h1 {
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.info-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--bg-light);
+    border-radius: 12px;
+}
+
+.info-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.tag {
+    padding: 0.5rem 1.2rem;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tag i {
+    color: var(--success);
+}
+
+.match-score {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    color: white;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.match-score.high {
+    background: linear-gradient(135deg, #7eb97e, #5a9f5a);
+}
+
+.match-score.medium {
+    background: linear-gradient(135deg, var(--warning), #e89540);
+}
+
+.match-score.low {
+    background: linear-gradient(135deg, var(--text-light), #505050);
+}
+</style>
+{% endblock %}

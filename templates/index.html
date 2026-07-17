@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Skincare Recommender{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Discover Your Perfect Skincare</h1>
+        <p>Personalized product recommendations tailored to your unique skin</p>
+        {% if not current_user.is_authenticated %}
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-user-plus"></i> Get Started
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+        {% else %}
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="{{ url_for('profile') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-user-circle"></i> My Profile
+            </a>
+            <a href="{{ url_for('skintest') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-flask"></i> Skin Test
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose Us?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                        <h4>AI-Powered Matching</h4>
+                        <p class="text-muted">Get personalized product recommendations based on your unique skin profile</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-flask fa-3x text-primary mb-3"></i>
+                        <h4>Skin Type Analysis</h4>
+                        <p class="text-muted">Take our scientific quiz to discover your exact skin type</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-heart fa-3x text-primary mb-3"></i>
+                        <h4>Save Favorites</h4>
+                        <p class="text-muted">Build your perfect skincare routine with saved products</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Explore Categories</h2>
+        <div class="category-grid">
+            <a href="{{ url_for('category_page', name='Moisturizer') }}" class="category-item">
+                <i class="fas fa-tint"></i>
+                <h4>Moisturizer</h4>
+            </a>
+            <a href="{{ url_for('category_page', name='Serum') }}" class="category-item">
+                <i class="fas fa-vial"></i>
+                <h4>Serum</h4>
+            </a>
+            <a href="{{ url_for('category_page', name='Sunscreen') }}" class="category-item">
+                <i class="fas fa-sun"></i>
+                <h4>Sunscreen</h4>
+            </a>
+            <a href="{{ url_for('category_page', name='Toner') }}" class="category-item">
+                <i class="fas fa-spray-can"></i>
+                <h4>Toner</h4>
+            </a>
+            <a href="{{ url_for('category_page', name='Lip Balm') }}" class="category-item">
+                <i class="fas fa-kiss-wink-heart"></i>
+                <h4>Lip Balm</h4>
+            </a>
+            <a href="{{ url_for('category_page', name='Exfoliator') }}" class="category-item">
+                <i class="fas fa-spa"></i>
+                <h4>Exfoliator</h4>
+            </a>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('categories') }}" class="btn btn-primary">
+                View All Categories <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+{% if not current_user.is_authenticated %}
+<section class="py-5">
+    <div class="container text-center">
+        <div class="card" style="background: linear-gradient(135deg, var(--primary-light), var(--secondary-color)); border: none;">
+            <div class="card-body py-5">
+                <h2>Ready to Transform Your Skincare Routine?</h2>
+                <p class="lead mb-4">Join thousands of users finding their perfect products</p>
+                <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">
+                    Create Free Account <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

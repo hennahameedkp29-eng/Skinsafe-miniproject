@@ -1,0 +1,292 @@
+<!-- ============================================
+     profile.html - User Profile & Preferences
+     ============================================ -->
+{% extends "base.html" %}
+
+{% block title %}My Profile - Skincare Recommender{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
+        <h1>My Profile</h1>
+        <p class="text-muted">Customize your skincare preferences for better recommendations</p>
+        {% if current_user.is_authenticated %}
+        <p class="text-primary fw-bold">{{ current_user.email }}</p>
+        {% endif %}
+    </div>
+
+    <form method="POST" action="{{ url_for('profile') }}">
+        
+        <!-- ============ SKIN TYPE SECTION ============ -->
+        <div class="profile-section">
+            <h3><i class="fas fa-droplet"></i> Skin Type</h3>
+            <p class="text-muted mb-4">Select your skin type or take our skin test to find out</p>
+            
+            <div class="form-group">
+                <label for="skin_type" class="form-label">Your Skin Type</label>
+                <select class="form-control form-select" id="skin_type" name="skin_type">
+                    <option value="">-- Select your skin type --</option>
+                    <option value="Oily" {% if profile and profile.skin_type == 'Oily' %}selected{% endif %}>
+                        🌊 Oily - Shiny, large pores, prone to acne
+                    </option>
+                    <option value="Dry" {% if profile and profile.skin_type == 'Dry' %}selected{% endif %}>
+                        🏜️ Dry - Tight, flaky, dull appearance
+                    </option>
+                    <option value="Normal" {% if profile and profile.skin_type == 'Normal' %}selected{% endif %}>
+                        ✨ Normal - Balanced, not too oily or dry
+                    </option>
+                    <option value="Combination" {% if profile and profile.skin_type == 'Combination' %}selected{% endif %}>
+                        🎭 Combination - Oily T-zone, dry cheeks
+                    </option>
+                    <option value="Sensitive" {% if profile and profile.skin_type == 'Sensitive' %}selected{% endif %}>
+                        ⚠️ Sensitive - Reactive, easily irritated
+                    </option>
+                </select>
+            </div>
+
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Not sure about your skin type?</strong>
+                <p class="mb-2">Take our AI-powered skin type test to get a personalized analysis based on scientific factors.</p>
+                <a href="{{ url_for('skintest') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-flask"></i> Take Skin Type Test
+                </a>
+            </div>
+        </div>
+
+        <!-- ============ PREFERENCES SECTION ============ -->
+        <div class="profile-section">
+            <h3><i class="fas fa-sliders"></i> Your Preferences</h3>
+            <p class="text-muted mb-4">Choose what matters most to you in skincare products</p>
+            
+            <!-- Irritant / Allergen Control -->
+            <div class="preference-group">
+                <h5><i class="fas fa-exclamation-triangle text-warning"></i> Irritant / Allergen Control</h5>
+                <p class="small text-muted mb-3">Products free from common irritants and allergens</p>
+                <div class="checkbox-grid">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Alcohol-free" id="alcohol"
+                            {% if profile and 'Alcohol-free' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="alcohol">
+                            <i class="fas fa-ban text-danger"></i> Alcohol-free
+                            <small class="d-block text-muted">Prevents dryness and irritation</small>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="EU-allergen-free" id="allergen"
+                            {% if profile and 'EU-allergen-free' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="allergen">
+                            <i class="fas fa-shield-alt text-success"></i> EU-allergen-free
+                            <small class="d-block text-muted">No EU-regulated allergens</small>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Fragrance-free" id="fragrance"
+                            {% if profile and 'Fragrance-free' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="fragrance">
+                            <i class="fas fa-wind text-info"></i> Fragrance-free
+                            <small class="d-block text-muted">No synthetic or natural fragrances</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oil & Acne Control -->
+            <div class="preference-group">
+                <h5><i class="fas fa-tint-slash text-primary"></i> Oil & Acne Control</h5>
+                <p class="small text-muted mb-3">Products designed for acne-prone and oily skin</p>
+                <div class="checkbox-grid">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Oil-free" id="oil"
+                            {% if profile and 'Oil-free' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="oil">
+                            <i class="fas fa-droplet-slash text-primary"></i> Oil-free
+                            <small class="d-block text-muted">Won't clog pores or add shine</small>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Fungal-acne-safe" id="fungal"
+                            {% if profile and 'Fungal-acne-safe' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="fungal">
+                            <i class="fas fa-bacterium text-danger"></i> Fungal-acne-safe
+                            <small class="d-block text-muted">Safe for malassezia-prone skin</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preservative & Chemical Sensitivity -->
+            <div class="preference-group">
+                <h5><i class="fas fa-flask-vial text-secondary"></i> Preservative & Chemical Sensitivity</h5>
+                <p class="small text-muted mb-3">Avoid specific preservatives and chemicals</p>
+                <div class="checkbox-grid">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Paraben-free" id="paraben"
+                            {% if profile and 'Paraben-free' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="paraben">
+                            <i class="fas fa-ban text-danger"></i> Paraben-free
+                            <small class="d-block text-muted">No parabens preservatives</small>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Sulfate-free" id="sulfate"
+                            {% if profile and 'Sulfate-free' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="sulfate">
+                            <i class="fas fa-soap text-info"></i> Sulfate-free
+                            <small class="d-block text-muted">Gentle cleansing agents only</small>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Silicone-free" id="silicone"
+                            {% if profile and 'Silicone-free' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="silicone">
+                            <i class="fas fa-circle-notch text-secondary"></i> Silicone-free
+                            <small class="d-block text-muted">No silicone ingredients</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ethical & Environmental -->
+            <div class="preference-group">
+                <h5><i class="fas fa-leaf text-success"></i> Ethical & Environmental</h5>
+                <p class="small text-muted mb-3">Support cruelty-free and eco-friendly products</p>
+                <div class="checkbox-grid">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Cruelty-free" id="cruelty"
+                            {% if profile and 'Cruelty-free' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="cruelty">
+                            <i class="fas fa-heart text-danger"></i> Cruelty-free
+                            <small class="d-block text-muted">Not tested on animals</small>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Reef-safe" id="reef"
+                            {% if profile and 'Reef-safe' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="reef">
+                            <i class="fas fa-water text-info"></i> Reef-safe
+                            <small class="d-block text-muted">Ocean and reef friendly</small>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="preferences" value="Vegan" id="vegan"
+                            {% if profile and 'Vegan' in profile.preferences %}checked{% endif %}>
+                        <label class="form-check-label" for="vegan">
+                            <i class="fas fa-seedling text-success"></i> Vegan
+                            <small class="d-block text-muted">No animal-derived ingredients</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ TARGETS SECTION ============ -->
+        <div class="profile-section">
+            <h3><i class="fas fa-bullseye"></i> Skincare Targets</h3>
+            <p class="text-muted mb-4">What are your main skincare goals? Select all that apply.</p>
+            
+            <div class="checkbox-grid">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="targets" value="anti-ageing" id="antiage"
+                        {% if profile and 'anti-ageing' in profile.targets %}checked{% endif %}>
+                    <label class="form-check-label" for="antiage">
+                        <i class="fas fa-clock text-primary"></i> Anti-ageing
+                        <small class="d-block text-muted">Fine lines, wrinkles</small>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="targets" value="better texture" id="texture"
+                        {% if profile and 'better texture' in profile.targets %}checked{% endif %}>
+                    <label class="form-check-label" for="texture">
+                        <i class="fas fa-fingerprint text-info"></i> Better Texture
+                        <small class="d-block text-muted">Smooth, refined skin</small>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="targets" value="brightening skin" id="brightening"
+                        {% if profile and 'brightening skin' in profile.targets %}checked{% endif %}>
+                    <label class="form-check-label" for="brightening">
+                        <i class="fas fa-sun text-warning"></i> Brightening Skin
+                        <small class="d-block text-muted">Even, radiant tone</small>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="targets" value="dark spots" id="darkspots"
+                        {% if profile and 'dark spots' in profile.targets %}checked{% endif %}>
+                    <label class="form-check-label" for="darkspots">
+                        <i class="fas fa-circle text-secondary"></i> Dark Spots
+                        <small class="d-block text-muted">Hyperpigmentation</small>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="targets" value="fighting acne" id="acne"
+                        {% if profile and 'fighting acne' in profile.targets %}checked{% endif %}>
+                    <label class="form-check-label" for="acne">
+                        <i class="fas fa-bacterium text-danger"></i> Fighting Acne
+                        <small class="d-block text-muted">Breakouts, blemishes</small>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="targets" value="reduce pores" id="pores"
+                        {% if profile and 'reduce pores' in profile.targets %}checked{% endif %}>
+                    <label class="form-check-label" for="pores">
+                        <i class="fas fa-compress text-primary"></i> Reduce Pores
+                        <small class="d-block text-muted">Minimize appearance</small>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="targets" value="scar healing" id="scar"
+                        {% if profile and 'scar healing' in profile.targets %}checked{% endif %}>
+                    <label class="form-check-label" for="scar">
+                        <i class="fas fa-band-aid text-danger"></i> Scar Healing
+                        <small class="d-block text-muted">Acne scars, marks</small>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="targets" value="hydration" id="hydration"
+                        {% if profile and 'hydration' in profile.targets %}checked{% endif %}>
+                    <label class="form-check-label" for="hydration">
+                        <i class="fas fa-tint text-info"></i> Hydration
+                        <small class="d-block text-muted">Moisture, plumpness</small>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save"></i> Save Profile
+            </button>
+            <a href="{{ url_for('home') }}" class="btn btn-outline-primary btn-lg ms-2">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+
+    <!-- Profile Summary (if profile exists) -->
+    {% if profile %}
+    <div class="card mt-5" style="background: linear-gradient(135deg, var(--primary-light), var(--secondary-color));">
+        <div class="card-body">
+            <h4 class="mb-3"><i class="fas fa-chart-pie"></i> Your Profile Summary</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Skin Type:</strong>
+                    <p class="text-muted">{{ profile.skin_type or 'Not set' }}</p>
+                </div>
+                <div class="col-md-4">
+                    <strong>Preferences:</strong>
+                    <p class="text-muted">{{ profile.preferences.split(',')|length if profile.preferences else 0 }} selected</p>
+                </div>
+                <div class="col-md-4">
+                    <strong>Targets:</strong>
+                    <p class="text-muted">{{ profile.targets.split(',')|length if profile.targets else 0 }} goals</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

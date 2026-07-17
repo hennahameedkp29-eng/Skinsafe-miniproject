@@ -1,0 +1,84 @@
+<!-- ============================================
+     signup.html - User Registration Page
+     ============================================ -->
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Skincare Recommender{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="text-center mb-4">
+        <i class="fas fa-spa fa-3x text-primary mb-3"></i>
+        <h2>Create Your Account</h2>
+        <p class="text-muted">Start your personalized skincare journey</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('signup') }}" id="signupForm">
+        <div class="form-group">
+            <label for="email" class="form-label">
+                <i class="fas fa-envelope"></i> Email Address
+            </label>
+            <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                name="email" 
+                placeholder="your.email@example.com"
+                required
+                autocomplete="email"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="form-label">
+                <i class="fas fa-lock"></i> Password
+            </label>
+            <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                name="password" 
+                placeholder="Enter a strong password"
+                minlength="6"
+                required
+                autocomplete="new-password"
+            >
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i> Must be at least 6 characters
+            </small>
+        </div>
+
+        <div class="form-group">
+            <label for="confirm_password" class="form-label">
+                <i class="fas fa-lock"></i> Confirm Password
+            </label>
+            <input 
+                type="password" 
+                class="form-control" 
+                id="confirm_password" 
+                name="confirm_password" 
+                placeholder="Re-enter your password"
+                required
+                autocomplete="new-password"
+            >
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3 btn-lg">
+            <i class="fas fa-user-plus"></i> Create Account
+        </button>
+    </form>
+
+    <div class="text-center mt-4">
+        <p class="text-muted">
+            Already have an account? 
+            <a href="{{ url_for('login') }}" class="text-primary fw-bold">Login here</a>
+        </p>
+    </div>
+
+    <div class="text-center mt-3">
+        <small class="text-muted">
+            By signing up, you agree to our Terms of Service and Privacy Policy
+        </small>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Skin Type Test - Skincare Recommender{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 700px;">
+    <!-- Header -->
+    <div class="text-center mb-4">
+        <i class="fas fa-flask fa-3x text-primary mb-3"></i>
+        <h2>Discover Your Skin Type</h2>
+        <p class="text-muted">Answer these questions for personalized analysis</p>
+    </div>
+
+    <!-- Info -->
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <strong>How it works:</strong> Our AI analyzes your responses to determine your skin type with high accuracy.
+    </div>
+
+    <form method="POST" action="{{ url_for('skintest_submit') }}">
+        
+        <!-- Basic Information -->
+        <div class="profile-section">
+            <h4><i class="fas fa-user"></i> Basic Information</h4>
+            
+            <div class="form-group">
+                <label for="age" class="form-label">Age *</label>
+                <input 
+                    type="number" 
+                    class="form-control" 
+                    id="age"
+                    name="age" 
+                    min="13" 
+                    max="100" 
+                    value="25"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="gender" class="form-label">Gender *</label>
+                <select class="form-control form-select" id="gender" name="gender" required>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Skin Characteristics -->
+        <div class="profile-section">
+            <h4><i class="fas fa-microscope"></i> Skin Characteristics</h4>
+            
+            <div class="form-group">
+                <label for="hydration" class="form-label">How hydrated does your skin feel? *</label>
+                <select class="form-control form-select" id="hydration" name="hydration" required>
+                    <option value="">-- Select --</option>
+                    <option value="Low">🏜️ Low - Feels tight, dry, and flaky</option>
+                    <option value="Medium">💧 Medium - Sometimes dry, sometimes normal</option>
+                    <option value="High">💦 High - Well-hydrated and comfortable</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="oil" class="form-label">How oily is your skin? *</label>
+                <select class="form-control form-select" id="oil" name="oil" required>
+                    <option value="">-- Select --</option>
+                    <option value="Low">🌵 Low - Minimal to no shine</option>
+                    <option value="Medium">⚖️ Medium - Some shine in T-zone by midday</option>
+                    <option value="High">💧 High - Shiny and oily throughout the day</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sensitivity" class="form-label">How sensitive is your skin? *</label>
+                <select class="form-control form-select" id="sensitivity" name="sensitivity" required>
+                    <option value="">-- Select --</option>
+                    <option value="Low">✅ Low - Rarely reacts to products</option>
+                    <option value="Medium">⚠️ Medium - Occasionally sensitive</option>
+                    <option value="High">🔴 High - Frequently gets irritated or red</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Environmental Factors -->
+        <div class="profile-section">
+            <h4><i class="fas fa-cloud-sun"></i> Your Environment</h4>
+            <p class="text-muted small mb-3">Climate affects your skin's behavior</p>
+            
+            <div class="form-group">
+                <label for="temperature" class="form-label">Average Temperature in Your Area (°C)</label>
+                <input 
+                    type="number" 
+                    class="form-control" 
+                    id="temperature"
+                    name="temperature" 
+                    min="-20" 
+                    max="50" 
+                    value="25"
+                    step="0.1"
+                >
+                <small class="text-muted">
+                    ❄️ Below 10°C = Cold | 🌤️ 10-25°C = Moderate | 🌡️ Above 25°C = Hot
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="humidity" class="form-label">Average Humidity in Your Area (%)</label>
+                <input 
+                    type="number" 
+                    class="form-control" 
+                    id="humidity"
+                    name="humidity" 
+                    min="0" 
+                    max="100" 
+                    value="50"
+                >
+                <small class="text-muted">
+                    💡 30-50% = Dry | 50-70% = Moderate | 70-100% = Humid
+                </small>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-magic"></i> Analyze My Skin Type
+            </button>
+        </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="text-center mt-4">
+        <p class="text-muted small">
+            <i class="fas fa-lock"></i> Your data is private and secure
+        </p>
+        <a href="{{ url_for('profile') }}" class="text-primary">
+            <i class="fas fa-arrow-left"></i> Back to Profile
+        </a>
+    </div>
+</div>
+
+<style>
+.profile-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.profile-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid var(--primary-light);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control, .form-select {
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(156, 127, 184, 0.1);
+    outline: none;
+}
+</style>
+{% endblock %}

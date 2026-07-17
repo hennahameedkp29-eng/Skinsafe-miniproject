@@ -1,0 +1,11 @@
+﻿venv/
+__pycache__/
+*.pyc
+.env
+.streamlit/secrets.toml
+*.pkl
+*.faiss
+
+skincare.db
+
+notes.txt

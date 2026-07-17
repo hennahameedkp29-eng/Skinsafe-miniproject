@@ -1,0 +1,67 @@
+<!-- ============================================ -->
+<!-- search.html - FIXED (product_id → index) -->
+<!-- ============================================ -->
+{% extends "base.html" %}
+
+{% block title %}Search Results - Skincare Recommender{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1>Search Results</h1>
+    {% if query %}
+    <p class="text-muted">Showing results for "{{ query }}"</p>
+    {% endif %}
+</div>
+
+{% if results %}
+<div class="row g-4">
+    {% for product in results %}
+    <div class="col-md-4 col-lg-3">
+        <div class="card product-card">
+            {% if product.match_score %}
+            <div class="product-badge">
+                {{ product.match_score }}% Match
+            </div>
+            {% endif %}
+            
+            {% if current_user.is_authenticated %}
+            <button class="save-btn" onclick="window.location.href='{{ url_for('save_product', idx=product.index) }}'">
+                <i class="fas fa-heart"></i>
+            </button>
+            {% endif %}
+            
+            <img src="{{ product.image_url or url_for('static', filename='images/placeholder.png') }}" 
+                 class="card-img-top" 
+                 alt="{{ product.title }}"
+                 onerror="this.src='{{ url_for('static', filename='images/placeholder.png') }}'">
+            
+            <div class="card-body">
+                <div class="text-muted small mb-2">{{ product.brand }}</div>
+                <h5 class="card-title">{{ product.title[:50] }}{% if product.title|length > 50 %}...{% endif %}</h5>
+                
+                {% if product.suited_skin_types %}
+                <p class="card-text small">
+                    <i class="fas fa-droplet"></i> 
+                    {{ product.suited_skin_types[:40] }}{% if product.suited_skin_types|length > 40 %}...{% endif %}
+                </p>
+                {% endif %}
+                
+                <a href="{{ url_for('product', idx=product.index) }}" class="btn btn-primary btn-sm w-100">
+                    View Details <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="fas fa-search fa-4x text-muted mb-4"></i>
+    <h3>No products found</h3>
+    <p class="text-muted">Try a different search term</p>
+    <a href="{{ url_for('home') }}" class="btn btn-primary mt-3">
+        Back to Home
+    </a>
+</div>
+{% endif %}
+{% endblock %}
